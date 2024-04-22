@@ -1,6 +1,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-
+import axios from 'axios'
 class Stock extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +13,7 @@ class Stock extends React.Component {
   componentDidMount() {
     this.fetchStock();
   }
-
+  
   fetchStock() {
     const pointerToThis = this;
     console.log(pointerToThis);
@@ -23,34 +23,38 @@ class Stock extends React.Component {
     let stockChartXValuesFunction = [];
     let stockChartYValuesFunction = [];
 
-    fetch(API_Call)
-      .then(
-        function(response) {
-          return response.json();
+    axios
+    .get('http://localhost:3001/getdata', {
+      timeout: 5000
+    })
+    .then(
+      res => {
+        for(var key in res.data){
+          console.log()
+          stockChartXValuesFunction.push(res.data[key]["TIME"]);
+          stockChartYValuesFunction.push(res.data[key]["VEL"]);
+          
         }
-      )
-      .then(
-        function(data) {
-          console.log(data);
+        console.log(stockChartXValuesFunction)
+        console.log(stockChartYValuesFunction)
+        pointerToThis.setState({
+          stockChartXValues: stockChartXValuesFunction,
+          stockChartYValues: stockChartYValuesFunction
+        });
 
-          for (var key in data['Time Series (Daily)']) {
-            stockChartXValuesFunction.push(key);
-            stockChartYValuesFunction.push(data['Time Series (Daily)'][key]['1. open']);
-          }
+      }
+    )
+    .catch(err => console.error(err));
 
-          // console.log(stockChartXValuesFunction);
-          pointerToThis.setState({
-            stockChartXValues: stockChartXValuesFunction,
-            stockChartYValues: stockChartYValuesFunction
-          });
-        }
-      )
+
+
+    
   }
-
+  
   render() {
     return (
       <div>
-        <h1>Stock Market</h1>
+        <h1>Discharge Rate</h1>
         <Plot
           data={[
             {
@@ -61,7 +65,7 @@ class Stock extends React.Component {
               marker: {color: 'red'},
             }
           ]}
-          layout={{width: 720, height: 440, title: 'A Fancy Plot'}}
+          layout={{width: 1420, height: 840, title: 'A Fancy Plot'}}
         />
       </div>
     )
