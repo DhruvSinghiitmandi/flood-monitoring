@@ -10,7 +10,8 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
-const uri = 'mongodb+srv://dp42:1234@cluster0.fcqtdbe.mongodb.net/cluster0';
+
+const uri = YOUR_MONGODB_URI;
 
 
 // Middleware
